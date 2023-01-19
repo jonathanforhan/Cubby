@@ -16,6 +16,8 @@ app.use(express.json())
 
 app.use(cors(corsConf))
 app.use('/register', require('./routes/register'))
+app.use('/auth', require('./routes/auth'))
+app.use('/refresh', require('./routes/refresh'))
 
 mongoose.connection.once('open', () => {
   console.log('connected to MongoDB')

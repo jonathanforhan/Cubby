@@ -11,8 +11,11 @@ const handleNewUser = async (req, res) => {
   // check for dupes
   const duplicate_user = await User.findOne({ email: email }).exec()
   const duplicate_email = await User.findOne({ username: username }).exec()
-  if(duplicate_user) return res.sendStatus.sendStatus(409).json({ 'message': 'username already taken' })
-  if(duplicate_email) return res.sendStatus.sendStatus(409).json({ 'message': 'email already taken' })
+  if(duplicate_user) {
+    return res.status(409).json({ message: 'username already taken' })
+  } else if(duplicate_email) {
+    return res.status(409).json({ message: 'email already taken' })
+  }
 
   try {
     // encrypt password
