@@ -18,7 +18,7 @@ const App = () => {
     <Routes>
       <Route path='/' element={ loggedIn ? <HomePage/> : <LoginPage loggedInChange={loggedInChange}/> }/>
       <Route path={'/group/:id'} element={ loggedIn ? <GroupPage/> : <LoginPage loggedInChange={loggedInChange}/> }/>
-      <Route path='register' element={ <RegisterPage/> }/>
+      <Route path='/register' element={ <RegisterPage loggedInChange={loggedInChange}/>}/>
       <Route path='/*'element={ <ErrorPage/> }/>
     </Routes>
     </>
