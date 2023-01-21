@@ -1,71 +1,85 @@
-import { React, useState } from "react"
-import { Link } from "react-router-dom"
-import { HomePage } from './HomePage'
-import history from "../utils/history"
+import { useState } from "react"
+import { RegisterModal } from '../components/RegisterModal.js'
+import { post, get } from "../utils/fetch.js"
 
 export const RegisterPage = (props) => {
 
-  const handlePasswordMatch = (a, b) => {
-    if(a === '' || b === '') return ''
-    if(a === b) {
-      return '#00FF00'
-    } else {
-      return '#FF0000'
-    }
-  }
+  // FORM DATA
+  const [firstname, setFirstname] = useState('')
+  const handleFirstname = (e) => setFirstname(e.target.value)
+
+  const [lastname, setLastname] = useState('')
+  const handleLastname = (e) => setLastname(e.target.value)
+
+  const [email, setEmail] = useState('')
+  const handleEmail = (e) => setEmail(e.target.value)
+
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const handlePhoneNumber = (e) => setPhoneNumber(e.target.value)
 
   const [firstPassword, setFirstPassword] = useState('')
-  const handleFirstPassword = (e) => {
-    setFirstPassword(e.target.value)
-  }
+  const handleFirstPassword = (e) => setFirstPassword(e.target.value)
+
   const [secondPassword, setSecondPassword] = useState('')
-  const handleSecondPassword = (e) => {
-    setSecondPassword(e.target.value)
+  const handleSecondPassword = (e) => setSecondPassword(e.target.value)
+
+  const handlePasswordMatch = (a, b) => {
+    if(a === '' || b === '') return ''
+    let color = a === b ? '#00FF00' : '#FF0000'; return color
   }
 
-  const [linkPath, setLinkPath] = useState('/register')
-  const handleLinkPath = (path) => {
-    setLinkPath(path)
+  let formBody = {
+    firstname: firstname,
+    lastname: lastname,
+    email: email,
+    phoneNumber: phoneNumber,
+    password: secondPassword
+  }
+
+  // POST REQ TO /register AND /auth
+  const postRegister = async () => {
+    if(firstPassword !== secondPassword) { return alert('Passwords must match') }
+    for(let field in formBody) {
+      if(!formBody[field]) return alert(`Missing ${field}`)
+    }
+    if(firstPassword.length < 6) return alert('Password must be at least 6 characters long')
+    
+    try {
+      await post('/register', formBody)
+    } catch (err) { console.error(err) }
+    try {
+      await post('/auth', formBody).then(jwt => {
+        if(jwt.success) props.funcs.Login(jwt.token)
+      })
+    } catch (err) { console.error(err) }
+  }
+
+  let vars = {
+    user: props.vars.user,
+
+    formBody: formBody,
+    firstPassword: firstPassword,
+    secondPassword: secondPassword
+  }
+
+  let funcs = {
+    postRegister: postRegister,
+
+    handleFirstname: handleFirstname,
+    handleLastname: handleLastname,
+    handleEmail: handleEmail,
+    handlePhoneNumber: handlePhoneNumber,
+    handleFirstPassword: handleFirstPassword,
+    handleSecondPassword: handleSecondPassword,
+    handlePasswordMatch: handlePasswordMatch,
   }
 
   return (
     <>
-      <div className="SignUpPage bg-gradient-to-br from-indigo-500 to-pink-300 min-h-screen grid">
-        <div className="SignUpModal h-[38rem] lg:h-[40rem] 2xl:h-[42rem] w-3/4 md:w-5/12 lg:1/3 2xl:w-1/4 bg-white m-auto rounded-lg pb-8">
-          <div className="SignUpInput grid h-[85%] pt-8 lg:pt-10 px-5 lg:px-10">
-            <div className="SignUpTitle text-center text-[2rem] lg:text-[2.3rem] 2xl:text-[2.8rem]">Cubby Sign Up</div>
-            <div className="NameWrapper text-[1.1rem] lg:text-[1.2rem] text-center">
-              <input type='text' id='FirstName' name='FirstName' placeholder="FirstName" className="FirstName border rounded-full w-11/12 p-4 h-[2.2rem] lg:h-[3rem]"/>
-            </div>
-            <div className="NameWrapper text-[1.1rem] lg:text-[1.2rem] text-center">
-              <input type='text' id='LastName' name='LastName' placeholder="LastName" className="LastName border rounded-full w-11/12 p-4 h-[2.2rem] lg:h-[3rem]"/>
-            </div>
-            <div className="PhoneNumber text-[1.1rem] lg:text-[1.2rem] text-center">
-              <input type='tel' id='Phone Number' name='Phone Number' placeholder="Phone Number" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required
-                     className="Phone Number border rounded-full w-11/12 p-4 h-[2.2rem] lg:h-[3rem]"/>
-            </div>
-            <div className="EmailWrapper text-[1.1rem] lg:text-[1.2rem] text-center">
-              <input type='email' id='Email' name='Email' placeholder="Email" className="Email border rounded-full w-11/12 p-4 h-[2.2rem] lg:h-[3rem]"/>
-            </div>
-            <div className="PasswordWrapper text-[1.1rem] lg:text-[1.2rem] text-center">
-              <input onChange={handleFirstPassword} type='password' id='Password' name='Password' placeholder="Password"
-                     className="Password border rounded-full p-4 w-11/12 h-[2.2rem] lg:h-[3rem]"/>
-            </div>
-            <div className="PasswordWrapper text-[1.1rem] lg:text-[1.2rem] text-center">
-              <input onChange={handleSecondPassword} type='password' id='Password' name='Password' placeholder="Verify Password"
-                    style={{borderColor: handlePasswordMatch(firstPassword, secondPassword)}}
-                    className="PasswordVerify focus:outline-none border focus:border-[2px] rounded-full p-4 w-11/12 h-[2.2rem] lg:h-[3rem]"/>
-            </div>
-          </div>
-          <div className="SignUpButtonWrapper text-center p-[5%]">
-            <Link to='/' element={<HomePage/>}>
-            <button className="SignUpButton border w-[10rem] h-[3rem] text-[1.1rem] rounded-md bg-gradient-to-br from-indigo-200 to-pink-100
-                               hover:from-indigo-300 hover:to-pink-200"
-              onClick={() => { props.loggedInChange(); history.replace('/') }}>Sign Up</button>
-            </Link>
-          </div>
-        </div>
-      </div>
+    <div className="SignUpPage bg-gradient-to-br from-indigo-500 to-pink-300 min-h-screen grid">
+      <RegisterModal vars={vars} funcs={funcs} />
+    </div>
     </>
   )
+
 }

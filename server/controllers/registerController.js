@@ -2,19 +2,20 @@ const User = require('../model/User')
 const bcrypt = require('bcrypt')
 
 const handleNewUser = async (req, res) => {
-  const { username, email, password } = req.body
-  if(!username || !email || !password) {
-    console.log(req)
-    return res.status(400).json({ 'message': 'missing one or all required fields' })
+
+  const { firstname, lastname, email, phoneNumber, password } = req.body
+  if(!firstname || !lastname || !email || !phoneNumber || !password) {
+    return res.status(400).json({ error: 'Missing field data', src: 'registerController' })
   }
 
   // check for dupes
-  const duplicate_user = await User.findOne({ email: email }).exec()
-  const duplicate_email = await User.findOne({ username: username }).exec()
-  if(duplicate_user) {
-    return res.status(409).json({ message: 'username already taken' })
-  } else if(duplicate_email) {
-    return res.status(409).json({ message: 'email already taken' })
+  const duplicateEmail = await User.findOne({ email: email }).exec()
+  if(duplicateEmail) {
+    return res.status(409).json({ error: 'Email is already in use', src: 'registerController' })
+  }
+  const duplicatePhoneNumber = await User.findOne({ phoneNumber: phoneNumber }).exec()
+  if(duplicatePhoneNumber) {
+    return res.status(409).json({ error: 'Phone number is already in use', src: 'registerController' })
   }
 
   try {
@@ -23,16 +24,18 @@ const handleNewUser = async (req, res) => {
 
     // create and store new user
     await User.create({
-      'username': username,
-      'email': email,
-      'password': hashedPassword
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      phoneNumber: phoneNumber,
+      password: hashedPassword
     })
 
-    console.log(`new user ${username} created`)
+    console.log(`new user ${firstname} ${lastname} created`)
 
-    res.status(201).json({ 'success': `new user ${username} created` })
+    res.status(201).json({ success: `new user ${firstname} ${lastname} created` })
   } catch (err) {
-    res.status(500).json({ 'message': 'err.message' })
+    res.status(500).json({ error: err.message, src: 'registerController' })
   }
 }
 
