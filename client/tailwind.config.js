@@ -2,7 +2,13 @@
 module.exports = {
   content: ['./src/**/*.{html,js,jsx,ts}'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        lora: "'Lora', serif",
+        dm: "'DM Serif Text', serif",
+        roboto: "'Roboto', sans-serif"
+      },
+    },
   },
   plugins: [],
 }

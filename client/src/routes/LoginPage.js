@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { LoginModal } from "../components/LoginModal"
 
-import { post, get } from "../utils/fetch"
+import { post } from "../utils/fetch"
 
 export const LoginPage = (props) => {
 
