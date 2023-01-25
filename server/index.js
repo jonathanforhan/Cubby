@@ -33,8 +33,10 @@ app.use('/refresh', require('./routes/refresh'))
 // Access barrier
 app.use(verifyJWT)
 
+//app.use('/logout', require('./routes/logout'))
+
 // Cubby routes
-//app.use('/api', require('./routes/api/'))
+app.use('/api', require('./routes/api/cubby'))
 
 app.use(errorHandler)
 

@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -29,6 +30,10 @@ const userSchema = new Schema({
   },
   bio: {
     type: String,
+  },
+  cubbies: {
+    type: [ObjectId],
+    required: true,
   },
   refreshToken: String,
 })
