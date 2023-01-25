@@ -5,11 +5,12 @@ import decode from 'jwt-decode'
 
 import { get } from './utils/fetch'
 
-import { LoginPage } from './routes/LoginPage'
-import { HomePage } from './routes/HomePage'
-import { CubbiesPage } from './routes/CubbiesPage'
+import { LoginPage } from './routes/Login'
+import { Home } from './routes/Home'
+import { CubbiesHome } from './routes/CubbiesHome'
+import { Cubbies } from './routes/Cubbies'
 import { ErrorPage } from './routes/404'
-import { RegisterPage } from './routes/RegisterPage'
+import { RegisterPage } from './routes/Register'
 
 export const App = () => {
 
@@ -23,7 +24,7 @@ export const App = () => {
   const Logout = () => setUser(null)
 
   useEffect(() => {
-    (async function onLoad() {
+    (async function() {
       try {
         await get('/refresh').then(jwt => {
           if(jwt.success === 'authenticated') Login(jwt.token)
@@ -45,16 +46,14 @@ export const App = () => {
     Logout: Logout
   }
 
-  if(loading) {
-    return (<></>)
-  } else { 
+  if(!loading) { 
     if(user === null) {
       return (
       <>
       <Routes>
-        <Route path='/' element={ <LoginPage vars={vars} funcs={funcs} /> } />
-        <Route path='/register' element={ <RegisterPage vars={vars} funcs={funcs} /> } />
-        <Route path='/*'element={ <ErrorPage/> }/>
+        <Route path={'/'} element={ <LoginPage vars={vars} funcs={funcs} /> } />
+        <Route path={'/register'} element={ <RegisterPage vars={vars} funcs={funcs} /> } />
+        <Route path={'/*'} element={ <LoginPage/> }/>
       </Routes>
       </>
       )
@@ -62,13 +61,14 @@ export const App = () => {
       return (
         <>
         <Routes>
-          <Route path='/' element={ <HomePage vars={vars} funcs={funcs}/> } />
-          <Route path={'/cubbies'} element={ <CubbiesPage/> } />
-          <Route path='/*'element={ <ErrorPage/> }/>
+          <Route path={'/'} element={ <Home vars={vars} funcs={funcs}/> } />
+          <Route path={'/cubbies'} element={ <CubbiesHome vars={vars} funcs={funcs} /> } />
+          <Route path={'/cubbies/:id'} element={ <Cubbies vars={vars} funcs={funcs} /> } />
+          <Route path={'/*'} element={ <ErrorPage/> }/>
         </Routes>
         </>
       )}
-    }
+  }
 }
 
 // Hooks
@@ -82,5 +82,3 @@ const useWindowSize = () => {
   },[])
   return winSize
 }
-
-

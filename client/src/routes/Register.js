@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { RegisterModal } from '../components/RegisterModal.js'
-import { post, get } from "../utils/fetch.js"
+import { post } from "../utils/fetch.js"
 
 export const RegisterPage = (props) => {
 
@@ -45,10 +45,10 @@ export const RegisterPage = (props) => {
     if(firstPassword.length < 6) return alert('Password must be at least 6 characters long')
     
     try {
-      await post('/register', formBody)
+      await post('/register', null, formBody)
     } catch (err) { console.error(err) }
     try {
-      await post('/auth', formBody).then(jwt => {
+      await post('/auth', null, formBody).then(jwt => {
         if(jwt.success) props.funcs.Login(jwt.token)
       })
     } catch (err) { console.error(err) }

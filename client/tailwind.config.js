@@ -8,6 +8,9 @@ module.exports = {
         dm: "'DM Serif Text', serif",
         roboto: "'Roboto', sans-serif"
       },
+      boxShadow: {
+        toolbar: "0 0 12px 1px rgba(0, 0, 0, 0.07)"
+      }
     },
   },
   plugins: [],

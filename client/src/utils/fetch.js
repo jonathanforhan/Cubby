@@ -1,11 +1,12 @@
 const SERVER_PORT = '3001'
 const SERVER_URI = 'http://localhost:'
 
-export const post = async (route, body) => {
+export const post = async (route, auth, body) => {
   return fetch(`${SERVER_URI}${SERVER_PORT}${route}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'authorization': 'Bearer ' + auth,
     },
     credentials: 'include',
     body: JSON.stringify(body)
